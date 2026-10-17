@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ESP32 Drone Live Camera - Full Screen</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: #000;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #000;
+    }
+    /* Force image to upscale and fill the display while preserving aspect ratio */
+    #stream {
+      width: 100vw;
+      height: 100vh;
+      object-fit: contain;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
+      display: block;
+    }
+    /* Full stretch mode toggle */
+    #stream.stretch {
+      object-fit: fill !important;
+    }
+    #stream.cover {
+      object-fit: cover !important;
+    }
+    .hud-top {
+      position: absolute;
+      top: 15px;
+      left: 20px;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 8px 16px;
+      border-radius: 8px;
+      backdrop-filter: blur(6px);
+      font-size: 14px;
+      letter-spacing: 0.5px;
+    }
+    .live-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #00ff66;
+      box-shadow: 0 0 10px #00ff66;
+      animation: pulse 1.2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+    .hud-bottom {
+      position: absolute;
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      gap: 12px;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 10px 20px;
+      border-radius: 40px;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      transition: opacity 0.3s;
+    }
+    /* Auto-hide controls when idle */
+    .idle .hud-bottom, .idle .hud-top {
+      opacity: 0.15;
+    }
+    .hud-bottom:hover, .hud-top:hover {
+      opacity: 1 !important;
+    }
+    button {
+      background: #222;
+      color: #fff;
+      border: 1px solid #444;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    button:hover {
+      background: #007bff;
+      border-color: #007bff;
+    }
+    button.active {
+      background: #007bff;
+      border-color: #007bff;
+    }
+  </style>
+</head>
+<body>
+  <div id="stage">
+    <div class="hud-top">
+      <div class="live-dot"></div>
+      <strong>FIRE DRONE CAM</strong>
+      <span style="color:#888;">|</span>
+      <span id="res-tag">GC2145 &bull; LIVE</span>
+    </div>
+
+    <!-- Live MJPEG Stream -->
+    <img id="stream" src="http://192.168.0.113/stream" alt="Connecting to ESP32 stream..." />
+
+    <div class="hud-bottom">
+      <button onclick="toggleFullscreen()" id="fs-btn">&#x26F6; Full Screen</button>
+      <button onclick="setFit('contain')" id="btn-fit" class="active">Fit (Preserve Ratio)</button>
+      <button onclick="setFit('stretch')" id="btn-stretch">Stretch (Fill Screen)</button>
+      <button onclick="reconnect()">&#x21bb; Reconnect</button>
+    </div>
+  </div>
+
+  <script>
+    const stream = document.getElementById('stream');
+    const stage = document.getElementById('stage');
+    let idleTimer;
+
+    function resetIdle() {
+      document.body.classList.remove('idle');
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(() => {
+        document.body.classList.add('idle');
+      }, 3500);
+    }
+    window.addEventListener('mousemove', resetIdle);
+    window.addEventListener('click', resetIdle);
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        stage.requestFullscreen().catch(err => {
+          console.error(err);
+        });
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    function setFit(mode) {
+      document.getElementById('btn-fit').classList.remove('active');
+      document.getElementById('btn-stretch').classList.remove('active');
+
+      if (mode === 'stretch') {
+        stream.className = 'stretch';
+        document.getElementById('btn-stretch').classList.add('active');
+      } else {
+        stream.className = '';
+        document.getElementById('btn-fit').classList.add('active');
+      }
+    }
+
+    function reconnect() {
+      const url = "http://192.168.0.113/stream?t=" + new Date().getTime();
+      stream.src = url;
+    }
+
+    // Auto reconnect on stream error
+    stream.onerror = () => {
+      setTimeout(reconnect, 1500);
+    };
+  </script>
+</body>
+</html>

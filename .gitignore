@@ -1,0 +1,27 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C/C++ & Arduino build artifacts
+*.bin
+*.elf
+*.hex
+*.o
+*.d
+*.a
+
+# Tools and binaries
+arduino cle/
+*.exe
+
+# Operating System files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Environment and IDE settings
+.vscode/
+.idea/
+*.swp
+*~

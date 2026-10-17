@@ -1,0 +1,88 @@
+{
+  "_metadata": {
+    "version": "1.0",
+    "description": "Hardware-dependent camera, nozzle, ballistic, and servo calibration configuration",
+    "calibration_mode": "analytical_ballistic",
+    "notes": "Values marked 'provisional' pending final physical measurement on quadcopter frame"
+  },
+  "camera": {
+    "resolution_width": 320,
+    "resolution_height": 240,
+    "hfov_deg": 60.0,
+    "vfov_deg": 45.0,
+    "fx_px": 277.13,
+    "fy_px": 289.71,
+    "cx_px": 160.0,
+    "cy_px": 120.0,
+    "status": "PROVISIONAL_OPTICAL_MODEL"
+  },
+  "nozzle_offset_m": {
+    "dx_m": 0.0,
+    "dy_m": -0.040,
+    "dz_m": 0.015,
+    "notes": "Nozzle mounted 40mm below camera optical axis and 15mm forward",
+    "status": "PROVISIONAL_CAD_MEASUREMENT"
+  },
+  "ballistics": {
+    "water_velocity_mps": 4.0,
+    "gravity_mps2": 9.81,
+    "nominal_operating_dist_m": 1.0,
+    "dist_tolerance_m": 0.25,
+    "require_verified_distance_in_physical": true,
+    "status": "PROVISIONAL_ESTIMATE"
+  },
+  "servos": {
+    "pan_neutral_us": 1500.0,
+    "tilt_neutral_us": 1500.0,
+    "us_per_deg_pan": 11.11,
+    "us_per_deg_tilt": 11.11,
+    "pan_min_us": 1333,
+    "pan_max_us": 1667,
+    "tilt_min_us": 1333,
+    "tilt_max_us": 1667,
+    "settling_buffer_ms": 150,
+    "status": "PROVISIONAL_CONSERVATIVE_LIMITS"
+  },
+  "empirical_table": [
+    {
+      "dist_m": 0.8,
+      "u_px": 160,
+      "v_px": 120,
+      "pan_us": 1500,
+      "tilt_us": 1610,
+      "measured": false
+    },
+    {
+      "dist_m": 1.0,
+      "u_px": 160,
+      "v_px": 120,
+      "pan_us": 1500,
+      "tilt_us": 1665,
+      "measured": false
+    },
+    {
+      "dist_m": 1.2,
+      "u_px": 160,
+      "v_px": 120,
+      "pan_us": 1500,
+      "tilt_us": 1720,
+      "measured": false
+    },
+    {
+      "dist_m": 1.0,
+      "u_px": 80,
+      "v_px": 120,
+      "pan_us": 1380,
+      "tilt_us": 1665,
+      "measured": false
+    },
+    {
+      "dist_m": 1.0,
+      "u_px": 240,
+      "v_px": 120,
+      "pan_us": 1620,
+      "tilt_us": 1665,
+      "measured": false
+    }
+  ]
+}
